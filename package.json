@@ -1,0 +1,26 @@
+{
+  "name": "backend-ecommerce",
+  "version": "1.0.0",
+  "description": "A e-commerce backend app in typescript",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/app.js",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev":"nodemon dist/app.js"
+  },
+  "author": "zubair khan",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.1",
+    "nodemon": "^3.1.7",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.8.3"
+  }
+}
