@@ -8,7 +8,7 @@
     "start": "node dist/app.js",
     "build": "tsc",
     "watch": "tsc -w",
-    "dev":"nodemon dist/app.js"
+    "dev": "nodemon dist/app.js"
   },
   "author": "zubair khan",
   "license": "ISC",
