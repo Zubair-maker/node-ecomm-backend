@@ -28,12 +28,13 @@ export const newUser = asyncHandler(
     if (existedUser) {
       throw new ApiError("user already exist", 409);
     }
-
+     
+   //when login with google 
     let user = await User.findById(_id);
     if (user) {
       return res
         .status(201)
-        .json(new ApiResponse(201, "", `Welcome ${user.name}`));
+        .json(new ApiResponse(201, {}, `Welcome ${user.name}`));
     }
     user = await User.create({
       _id,
