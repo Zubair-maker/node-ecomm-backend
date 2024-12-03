@@ -48,4 +48,34 @@ export type reValidateCache = {
   product?: boolean;
   order?: boolean;
   admin?: boolean;
+  userId?: string;
+  orderId?: string;
+  productId?: string | string[];
 };
+
+export type OrderItemType = {
+  productName: string;
+  photo: string;
+  price: number;
+  quantity: number;
+  productId: string; //we send json data ie string
+};
+
+export type ShippingType = {
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  pinCode: number;
+};
+//order
+export interface NewOrderRequestBody {
+  shippingInfo: ShippingType;
+  user: string;
+  subTotal: number;
+  tax: number;
+  shippingCharges: number;
+  discount: number;
+  total: number;
+  orderItem: OrderItemType[];
+}

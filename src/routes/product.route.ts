@@ -25,6 +25,6 @@ router.get("/:id", getSingleProduct);
 
 router.put("/:id", isAdmin, singleUpload, updateProduct);
 
-router.get("/:id", isAdmin, deleteProduct);
+router.delete("/:id", isAdmin, deleteProduct);
 
 export default router;

@@ -4,7 +4,7 @@ import { asyncHandler } from "./errorMiddleware.js";
 
 export const isAdmin = asyncHandler(async (req, res, next) => {
   const { id } = req.query;
-//   console.log("id",id)
+  console.log("id",id)
   if (!id) {
     throw new ApiError("unauthorise user", 401);
   }
