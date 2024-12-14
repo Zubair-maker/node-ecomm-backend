@@ -52,10 +52,11 @@ export const newProduct = asyncHandler(
 
 export const getLatestProduct = asyncHandler(async (req, res, next) => {
   let product;
-  if (dataCache.has("latest-product")) product = JSON.parse(dataCache.get("latest-product")!);
-  if(!product) throw new ApiError("Product Not Found", 404);
+  if (dataCache.has("latest-product"))
+    product = JSON.parse(dataCache.get("latest-product")!);
   else {
     product = await Product.find({}).sort({ createdAt: -1 }).limit(5);
+    if (!product || product.length === 0) throw new ApiError("Product Not Found", 404);
     dataCache.set("latest-product", JSON.stringify(product));
   }
 
@@ -66,10 +67,13 @@ export const getLatestProduct = asyncHandler(async (req, res, next) => {
 
 export const getAdminProduct = asyncHandler(async (req, res, next) => {
   let product;
-  if (dataCache.has("all-product"))  product = JSON.parse(dataCache.get("all-product")!);
-  if(!product) throw new ApiError("Product Not Found", 404);
-  else {
+  if (dataCache.has("all-product"))
+    product = JSON.parse(dataCache.get("all-product")!);
+  if (!product || product.length === 0) {
     product = await Product.find({});
+    if (product.length === 0) {
+      throw new ApiError("Product Not Found", 404);
+    }
     dataCache.set("all-product", JSON.stringify(product));
   }
 
@@ -142,7 +146,10 @@ export const updateProduct = asyncHandler(
     if (category) product.category = category;
 
     await product.save();
-    await reValidateDataCache({ product: true });
+    await reValidateDataCache({
+      product: true,
+      productId: String(product._id),
+    });
     return res
       .status(201)
       .json(new ApiResponse(201, product, "Product Updated Successfully"));
@@ -161,7 +168,7 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
   });
 
   await Product.deleteOne();
-  await reValidateDataCache({ product: true });
+  await reValidateDataCache({ product: true, productId: String(product._id) });
   return res
     .status(200)
     .json(new ApiResponse(200, {}, "Product deleted Successfully"));
