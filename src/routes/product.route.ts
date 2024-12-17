@@ -3,6 +3,7 @@ import {
   deleteProduct,
   getAdminProduct,
   getAllCategoriesProduct,
+  getAllProduct,
   getLatestProduct,
   getSingleProduct,
   newProduct,
@@ -20,6 +21,8 @@ router.get("/latest", getLatestProduct);
 router.get("/allcategories", getAllCategoriesProduct);
 
 router.get("/admin-product", isAdmin, getAdminProduct);
+
+router.get("/all", getAllProduct);
 
 router.get("/:id", getSingleProduct);
 

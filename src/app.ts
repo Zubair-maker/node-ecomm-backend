@@ -6,6 +6,7 @@ import paymentRoutes from "./routes/payment.route.js";
 import { connectDB } from "./utils/features.js";
 import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 import { config } from "dotenv";
+import cors from "cors";
 import NodeCache from "node-cache";
 import morgan from "morgan";
 
@@ -20,7 +21,7 @@ connectDB(process.env.MONGO_URI || "");
 export const dataCache = new NodeCache();
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 

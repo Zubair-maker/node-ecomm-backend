@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { promises as fs } from "fs";
 import { asyncHandler } from "../middlewares/errorMiddleware.js";
 import {
   BaseQuery,
@@ -8,7 +9,6 @@ import {
 import { Product } from "../models/product.model.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
-import { rm } from "fs";
 import { dataCache } from "../app.js";
 import { reValidateDataCache } from "../utils/constant.js";
 
@@ -23,9 +23,11 @@ export const newProduct = asyncHandler(
       )
     ) {
       if (photo?.path) {
-        rm(photo.path, (err) => {
-          if (err) console.error("Failed to remove file:", err);
-        });
+        try {
+          await fs.unlink(photo.path); // Remove the uploaded file
+        } catch (err) {
+          console.error("Failed to remove file:", err);
+        }
       }
 
       throw new ApiError("Please add all fields", 400);
@@ -54,9 +56,11 @@ export const getLatestProduct = asyncHandler(async (req, res, next) => {
   let product;
   if (dataCache.has("latest-product"))
     product = JSON.parse(dataCache.get("latest-product")!);
-  else {
+  if (!product || product.length === 0) {
     product = await Product.find({}).sort({ createdAt: -1 }).limit(5);
-    if (!product || product.length === 0) throw new ApiError("Product Not Found", 404);
+    if (product.length === 0) {
+      throw new ApiError("Product Not Found", 404);
+    }
     dataCache.set("latest-product", JSON.stringify(product));
   }
 
@@ -86,8 +90,9 @@ export const getAdminProduct = asyncHandler(async (req, res, next) => {
 export const getSingleProduct = asyncHandler(async (req, res, next) => {
   let product;
   const { id } = req.params;
+  console.log("id", id);
   if (dataCache.has(`product-${id}`))
-    product = JSON.parse(dataCache.get("product-${id}")!);
+    product = JSON.parse(dataCache.get(`product-${id}`)!);
   else {
     product = await Product.findById(id);
     if (!product) {
@@ -133,10 +138,17 @@ export const updateProduct = asyncHandler(
       throw new ApiError("Product not found invalid  Id", 404);
     }
     if (photo) {
-      rm(product.photo, () => {
-        console.log("Old photo deleted.");
-      });
+      // Delete the old photo
+      if (product.photo) {
+        try {
+          await fs.unlink(product.photo);
+          console.log("Old photo deleted successfully.");
+        } catch (error) {
+          console.error("Failed to delete old photo:", error);
+        }
+      }
 
+      // Update the photo path
       product.photo = photo.path;
     }
 
@@ -163,9 +175,14 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
     throw new ApiError("Product not found", 404);
   }
 
-  rm(product.photo, () => {
-    console.log("Product photo deleted");
-  });
+  if (product.photo) {
+    try {
+      await fs.unlink(product.photo);
+      console.log("Product photo deleted successfully.");
+    } catch (error) {
+      console.error("Failed to delete product photo:", error);
+    }
+  }
 
   await Product.deleteOne();
   await reValidateDataCache({ product: true, productId: String(product._id) });
