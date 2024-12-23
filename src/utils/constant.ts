@@ -53,3 +53,20 @@ export const reduceStock = async (orderItem: OrderItemType[]) => {
     await product.save();
   }
 };
+
+// PercentageChange= (currentMonth − lastMonth)/lastMonth × 100 = %
+export const calculatePercentChange = (thisMoth: number, lastMonth: number) => {
+  if (lastMonth === 0) {
+    return thisMoth > 0 ? 100 : 0; // Handle division by zero
+  }
+  const percent = (thisMoth / lastMonth) * 100;
+  return Number(percent.toFixed(2));
+};
+//calculta revenue
+// const currentMonthRevenue = currentMonthOrder.reduce((acc,order)=>{
+//   if(typeof order.total === 'number'){
+//       acc = acc + order.total
+//   }
+//   return acc;
+// },0);
+

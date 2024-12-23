@@ -53,20 +53,25 @@ export const newOrder = asyncHandler(
 
 export const myOrders = asyncHandler(async (req, res, next) => {
   const { id } = req.query;
-
+  
   let orders;
-
-  if (dataCache.has(`my-orders-${id}`))
+  // Check cache for orders
+  if (dataCache.has(`my-orders-${id}`)) {
     orders = JSON.parse(dataCache.get(`my-orders-${id}`) as string);
-  if (!orders) throw new ApiError("orders not found", 404);
-  else {
+  } else {
+    // Fetch orders from database if not in cache
     orders = await Order.find({ user: id });
+    // If no orders found, throw an error
+    if (!orders || orders.length === 0) {
+      throw new ApiError("Orders not found", 404);
+    }
+    // Save fetched orders in cache
     dataCache.set(`my-orders-${id}`, JSON.stringify(orders));
   }
-
-  return res
+  // Return the response
+  res
     .status(200)
-    .json(new ApiResponse(200, orders, "Order Fetched Successfully"));
+    .json(new ApiResponse(200, orders, "Orders fetched successfully"));
 });
 
 export const getAllOrders = asyncHandler(async (_, res, next) => {
@@ -74,9 +79,13 @@ export const getAllOrders = asyncHandler(async (_, res, next) => {
 
   if (dataCache.has("all-orders"))
     orders = JSON.parse(dataCache.get("all-orders") as string);
-  if (!orders) throw new ApiError("orders not found", 404);
+  
   else {
+    // Fetch orders from database if not in cache
     orders = await Order.find().populate("user", "name"); //we need user name who placed the order
+    if (!orders || orders.length === 0) {
+      throw new ApiError("orders not found", 404);
+    }
     dataCache.set("all-orders", JSON.stringify(orders));
   }
 

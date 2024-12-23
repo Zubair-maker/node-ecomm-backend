@@ -9,6 +9,7 @@ import { isAdmin } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
+
 router.get("/discount", applyDiscount);
 
 router.post("/create/coupon", isAdmin, createCoupen);
