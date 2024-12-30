@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import ErrorHandlor from "../utils/ApiError.js";
 import { Controller } from "../types/type.js";
+import ApiError from "../utils/ApiError.js";
 
 export const errorMiddleware = (
-  err: ErrorHandlor,
+  err: ApiError,
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  err.message = err.message || "Internal Server Error";
-  err.statusCode = err.statusCode || 500;
-  return res.status(err.statusCode).json({
+): void => {
+  const message = err.message || "Internal Server Error";
+  const statusCode = err.statusCode || 500;
+
+  res.status(statusCode).json({
     success: false,
-    message: err.message,
+    message,
   });
 };
 
