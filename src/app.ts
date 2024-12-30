@@ -22,6 +22,12 @@ connectDB(process.env.MONGO_URI || "");
 export const dataCache = new NodeCache();
 
 const app = express();
+
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "default-src 'none'; img-src 'self' data:;");
+  next();
+});
+
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
