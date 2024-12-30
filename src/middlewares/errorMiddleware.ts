@@ -19,7 +19,11 @@ export const errorMiddleware = (
 //asyncHandler
 
 export const asyncHandler = (func: Controller) => {
-  return (req: Response, res: Request, next: NextFunction) => {
-    return Promise.resolve(func(req, res, next)).catch(next);
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      await func(req, res, next);
+    } catch (error) {
+      next(error);
+    }
   };
 };

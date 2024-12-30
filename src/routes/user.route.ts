@@ -13,7 +13,6 @@ router.post("/new", newUser);
 
 router.get("/all", isAdmin, getAllUsers);
 
-// router.route("/:id").get(getUser).delete(deleteUser);
 router.get("/:id", getUser);
 
 router.delete("/:id", isAdmin, deleteUser);

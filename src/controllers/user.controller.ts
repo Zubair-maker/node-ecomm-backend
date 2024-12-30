@@ -1,16 +1,12 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
+import { asyncHandler } from "../middlewares/errorMiddleware.js";
 import { User } from "../models/user.model.js";
 import { NewUserRequestBody } from "../types/type.js";
-import { asyncHandler } from "../middlewares/errorMiddleware.js";
-import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
 
 export const newUser = asyncHandler(
-  async (
-    req: Request<{}, {}, NewUserRequestBody>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  async (req: Request<{}, {}, NewUserRequestBody>, res: Response) => {
     const { _id, name, email, gender, photo, dob } = req.body;
 
     if (
@@ -28,8 +24,8 @@ export const newUser = asyncHandler(
     if (existedUser) {
       throw new ApiError("user already exist", 409);
     }
-     
-   //when login with google 
+
+    //when login with google
     let user = await User.findById(_id);
     if (user) {
       return res

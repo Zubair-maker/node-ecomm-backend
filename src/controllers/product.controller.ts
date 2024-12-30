@@ -1,15 +1,15 @@
 import { Request } from "express";
 import { promises as fs } from "fs";
+import { dataCache } from "../app.js";
 import { asyncHandler } from "../middlewares/errorMiddleware.js";
+import { Product } from "../models/product.model.js";
 import {
   BaseQuery,
   NewProductRequestBody,
   SearchQuery,
 } from "../types/type.js";
-import { Product } from "../models/product.model.js";
-import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
-import { dataCache } from "../app.js";
+import ApiResponse from "../utils/ApiResponse.js";
 import { reValidateDataCache } from "../utils/constant.js";
 
 export const newProduct = asyncHandler(

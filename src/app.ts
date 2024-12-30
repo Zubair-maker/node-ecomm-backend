@@ -33,7 +33,8 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/statistics", statisticsRoutes);
 
 app.use("/uploads", express.static("uploads"));
-app.use(errorMiddleware);
+
+app.use(errorMiddleware)
 
 app.listen(port, () => {
   console.log(`server is working on ${port}`);

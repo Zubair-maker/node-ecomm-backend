@@ -1,11 +1,11 @@
 import { Request } from "express";
-import { asyncHandler } from "../middlewares/errorMiddleware.js";
-import { NewOrderRequestBody } from "../types/type.js";
-import { Order } from "../models/order.model.js";
-import { reduceStock, reValidateDataCache } from "../utils/constant.js";
-import ApiResponse from "../utils/ApiResponse.js";
-import ApiError from "../utils/ApiError.js";
 import { dataCache } from "../app.js";
+import { asyncHandler } from "../middlewares/errorMiddleware.js";
+import { Order } from "../models/order.model.js";
+import { NewOrderRequestBody } from "../types/type.js";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import { reduceStock, reValidateDataCache } from "../utils/constant.js";
 
 export const newOrder = asyncHandler(
   async (req: Request<{}, {}, NewOrderRequestBody>, res, next) => {

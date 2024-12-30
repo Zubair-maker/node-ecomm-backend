@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { OrderItemType } from "../types/type.js";
 
 export const connectDB = (URI: string) => {
   mongoose
