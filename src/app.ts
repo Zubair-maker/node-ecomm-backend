@@ -28,7 +28,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
+app.use(cors({
+  origin: "https://frontend-ecommerce-rtk-d5hx-k2xqrzzmh.vercel.app", // Only allow this domain
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+}));
+
 app.use(express.json());
 app.use(morgan("dev"));
 
