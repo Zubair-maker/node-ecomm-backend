@@ -125,17 +125,48 @@ export const getDashboardStats = asyncHandler(async (req, res, next) => {
       products: productsCount,
       order: allOrder.length,
     };
+
+    //inventory for products
+    const categories = await Product.distinct("category");
+    const categoryCountPromise = categories.map((category)=> Product.countDocuments({category}))
+    const categoriesCount = await Promise.all(categoryCountPromise);
+    // Create categoryCountArray
+    const categoryCountArray = categories.map((category, i) => ({
+    category,
+    countPercent: Math.round((categoriesCount[i] / productsCount) * 100) 
+    }))
+    //calculate gender ratio male-female
+    let femaleCount = await User.countDocuments({ gender: "female" });
+    const userRatio = {
+      male:usersCount - femaleCount,
+      female:femaleCount
+    }
+    //find 4 latest transaction
+    const latestTransaction = await Order.find({}).
+    select(["orderItem","discount","total","status"]).limit(4)
+    const formattedTransaction = latestTransaction.map((transaction) => ({
+      _id: transaction._id,           
+      discount: transaction.discount,  
+      amount: transaction.total,        
+      quantity: transaction.orderItem.length, 
+      status: transaction.status,       
+    }));
+    /*------------------------------------------------------------------------------ */
     stats = {
+      categoryCount:categoryCountArray,
       revenue: revenueChangePercent,
       product: productChangePercent,
       order: orderChangePercent,
       user: userChangePercent,
+      userRatio,
       count,
       charts:{
         order:orderMonthCount,
         revenue:orderMonthRevenue
-      }
+      },
+      latestTransaction:formattedTransaction ,
     };
+    dataCache.set("admin-stats", JSON.stringify(stats));
   }
 
   return res.json({
